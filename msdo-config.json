@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "tools": {
+    "credscan": { "enabled": true },
+    "binskim": { "enabled": true },
+    "dependency": { "enabled": true },
+    "terrascan": { "enabled": true }
+  },
+  "policies": {
+    "severity": "high",
+    "failOn": ["critical", "high"]
+  }
+}
