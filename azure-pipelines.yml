@@ -1,7 +1,35 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+# # Maven
+# # Build your Java project and run tests with Apache Maven.
+# # Add steps that analyze code, save build artifacts, deploy, and more:
+# # https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+# trigger:
+# - master
+
+# pool:
+#   vmImage: ubuntu-latest
+
+# steps:
+# - task: Maven@3
+#   inputs:
+#     mavenPomFile: 'pom.xml'
+#     mavenOptions: '-Xmx3072m'
+#     javaHomeOption: 'JDKVersion'
+#     jdkVersionOption: '1.11'
+#     jdkArchitectureOption: 'x64'
+#     publishJUnitResults: true
+#     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#     goals: 'package'
+# - task: CopyFiles@2
+#   inputs:
+#     Contents: '**/*.war'
+#     TargetFolder: '$(build.artifactstagingdirectory)'
+
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#     ArtifactName: 'demofile'
+#     publishLocation: 'Container'
 
 trigger:
 - master
@@ -10,7 +38,21 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+# ---------------------------------------------------------
+# 1. Microsoft Security DevOps (MSDO)
+# ---------------------------------------------------------
+- task: MicrosoftSecurityDevOps@1
+  displayName: "Run Microsoft Security DevOps"
+  inputs:
+    config: 'msdo-config.json'   # your custom config file
+    publish: true                # publish SARIF results to Azure DevOps Security
+    break: true                  # fail pipeline on critical/high findings
+
+# ---------------------------------------------------------
+# 2. Build with Maven
+# ---------------------------------------------------------
 - task: Maven@3
+  displayName: "Build Maven Project"
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
@@ -20,12 +62,21 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
+
+# ---------------------------------------------------------
+# 3. Copy WAR artifacts
+# ---------------------------------------------------------
 - task: CopyFiles@2
+  displayName: "Copy WAR files"
   inputs:
     Contents: '**/*.war'
     TargetFolder: '$(build.artifactstagingdirectory)'
 
+# ---------------------------------------------------------
+# 4. Publish build artifacts
+# ---------------------------------------------------------
 - task: PublishBuildArtifacts@1
+  displayName: "Publish build artifacts"
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'demofile'
