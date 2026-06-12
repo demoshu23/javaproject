@@ -39,14 +39,22 @@ pool:
 
 steps:
 # ---------------------------------------------------------
+# 0. Fix MSDO config resolution on Linux
+# ---------------------------------------------------------
+- bash: |
+    echo "Preparing MSDO config for Linux..."
+    cp msdo-config.json msdo-config-linux.json
+  displayName: "Prepare MSDO Linux config"
+
+# ---------------------------------------------------------
 # 1. Microsoft Security DevOps (MSDO)
 # ---------------------------------------------------------
 - task: MicrosoftSecurityDevOps@1
   displayName: "Run Microsoft Security DevOps"
   inputs:
-    config: 'msdo-config.json'   # your custom config file
-    publish: true                # publish SARIF results to Azure DevOps Security
-    break: true                  # fail pipeline on critical/high findings
+    config: 'msdo-config.json'
+    publish: true
+    break: true
 
 # ---------------------------------------------------------
 # 2. Build with Maven
