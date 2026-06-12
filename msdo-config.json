@@ -1,13 +1,34 @@
 {
   "version": "1.0.0",
   "tools": {
-    "credscan": { "enabled": true },
-    "binskim": { "enabled": true },
-    "dependency": { "enabled": true },
-    "terrascan": { "enabled": true }
+    "credscan": {
+      "enabled": true
+    },
+    "dependency": {
+      "enabled": true,
+      "failOn": "high"
+    },
+    "terrascan": {
+      "enabled": true
+    },
+    "container": {
+      "enabled": true
+    },
+    "binskim": {
+      "enabled": false
+    },
+    "codescan": {
+      "enabled": false
+    }
   },
   "policies": {
     "severity": "high",
     "failOn": ["critical", "high"]
+  },
+  "output": {
+    "sarif": {
+      "enabled": true,
+      "file": ".gdn/msdo.sarif"
+    }
   }
 }
